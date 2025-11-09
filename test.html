@@ -24,6 +24,7 @@
         <button onclick="logInfo()">Log Info</button>
         <button onclick="logWarning()">Log Warning</button>
         <button onclick="logError()">Log Error</button>
+        <button onClick="logStructured()">Log Structured</button>
     </div>
 
     <div>
@@ -96,9 +97,17 @@
             if (!isInitialized) return alert('Please initialize Peavy first');
             Peavy.e('Error message from button');
         };
+        window.logStructured = () => {
+            if (!isInitialized) return alert('Please initialize Peavy first');
+            Peavy.i('Structured log from button', {
+                orderId: 'order-' + Date.now(),
+                amount: 99.99,
+                items: ['item1', 'item2', 'item3'],
+            });
+        };
 
         window.trackAction = () => {
-            if (!isInitialized) return alert('Please initialize Peavy first');
+            // if (!isInitialized) return alert('Please initialize Peavy first');
             Peavy.action('ui', 'button_click', 'track-action-btn');
         };
 

@@ -36,6 +36,9 @@ export function logEntryToJson(entry: LogEntry): Record<string, any> {
   result["peavy/labels"] = labels;
 
   if (entry.json) {
+    delete entry.json["peavy/labels"];
+    delete entry.json["timestamp"];
+    delete entry.json["severity"];
     Object.assign(result, entry.json);
   }
 

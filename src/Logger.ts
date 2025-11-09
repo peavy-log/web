@@ -88,16 +88,16 @@ export class Logger {
     switch (entry.level) {
       case LogLevel.Trace:
       case LogLevel.Debug:
-        console.debug(message, entry.error);
+        console.debug(message, entry.error ?? entry.json);
         break;
       case LogLevel.Info:
-        console.info(message, entry.error);
+        console.info(message, entry.error ?? entry.json);
         break;
       case LogLevel.Warning:
-        console.warn(message, entry.error);
+        console.warn(message, entry.error ?? entry.json);
         break;
       case LogLevel.Error:
-        console.error(message, entry.error);
+        console.error(message, entry.error ?? entry.json);
         break;
     }
   }

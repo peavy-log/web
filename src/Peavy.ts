@@ -47,6 +47,11 @@ class PeavyInstance {
   }
 
   setOptions(options: Partial<PeavyOptions>): void {
+    if (!this.isInitialized) {
+      console.warn("Peavy is not initialized. Call Peavy.init() first.");
+      return;
+    }
+
     if (options.endpoint !== undefined) {
       this.push.options.endpoint = options.endpoint;
     }
@@ -59,12 +64,22 @@ class PeavyInstance {
   }
 
   clearMeta(): void {
+    if (!this.isInitialized) {
+      console.warn("Peavy is not initialized. Call Peavy.init() first.");
+      return;
+    }
+
     this.logger.meta = {};
     this.meta = {};
     localStorage.removeItem("__peavy_meta");
   }
 
   setMeta(metas: Record<string, any>): void {
+    if (!this.isInitialized) {
+      console.warn("Peavy is not initialized. Call Peavy.init() first.");
+      return;
+    }
+
     for (const [key, value] of Object.entries(metas)) {
       if (value === null || value === undefined) {
         delete this.logger.meta[key];
@@ -110,47 +125,66 @@ class PeavyInstance {
   }
 
   log(builder: LogEntryBuilder | ((b: LogEntryBuilder) => void)): void {
+    if (!this.isInitialized) {
+      console.warn("Peavy is not initialized. Call Peavy.init() first.");
+      return;
+    }
     this.logger.log(builder);
   }
 
-  t(message: string, error?: Error | unknown): void {
+  private _log(level: LogLevel, message: string, errorOrObj?: Record<string, any> | Error | unknown): void {
+    if (!this.isInitialized) {
+      console.warn("Peavy is not initialized. Call Peavy.init() first.");
+      return;
+    }
+
+    let error =
+      errorOrObj && errorOrObj instanceof Error ? errorOrObj : undefined;
+    let json: Record<string, any> | undefined = undefined;
+    if (!error && errorOrObj) {
+      json = errorOrObj;
+    }
+    if (json && json['error']) {
+      error = json['error'];
+      delete json['error'];
+    }
+
     this.logger.log({
-      level: LogLevel.Trace,
+      level,
       message,
       error,
+      json,
     });
   }
 
-  d(message: string, error?: Error | unknown): void {
-    this.logger.log({
-      level: LogLevel.Debug,
-      message,
-      error,
-    });
+  t(message: string, error?: Error | unknown): void;
+  t(message: string, obj: Record<string, any>): void;
+  t(message: string, errorOrObj?: Record<string, any> | Error | unknown): void {
+    this._log(LogLevel.Trace, message, errorOrObj);
   }
 
-  i(message: string, error?: Error | unknown): void {
-    this.logger.log({
-      level: LogLevel.Info,
-      message,
-      error,
-    });
+  d(message: string, error?: Error | unknown): void;
+  d(message: string, obj: Record<string, any>): void;
+  d(message: string, errorOrObj?: Record<string, any> | Error | unknown): void {
+    this._log(LogLevel.Debug, message, errorOrObj);
   }
 
-  w(message: string, error?: Error | unknown): void {
-    this.logger.log({
-      level: LogLevel.Warning,
-      message,
-      error,
-    });
+  i(message: string, error?: Error | unknown): void;
+  i(message: string, obj: Record<string, any>): void;
+  i(message: string, errorOrObj?: Record<string, any> | Error | unknown): void {
+    this._log(LogLevel.Info, message, errorOrObj);
   }
 
-  e(message: string, error?: Error | unknown): void {
-    this.logger.log({
-      level: LogLevel.Error,
-      message,
-      error,
-    });
+  w(message: string, error?: Error | unknown): void;
+  w(message: string, obj: Record<string, any>): void;
+  w(message: string, errorOrObj?: Record<string, any> | Error | unknown): void {
+    this._log(LogLevel.Warning, message, errorOrObj);
+  }
+
+  e(message: string, error?: Error | unknown): void;
+  e(message: string, obj: Record<string, any>): void;
+  e(message: string, errorOrObj?: Record<string, any> | Error | unknown): void {
+    this._log(LogLevel.Error, message, errorOrObj);
   }
 
   ev(
@@ -161,6 +195,11 @@ class PeavyInstance {
     durationMs: number = 0,
     result: EventResult = EventResult.Success
   ): void {
+    if (!this.isInitialized) {
+      console.warn("Peavy is not initialized. Call Peavy.init() first.");
+      return;
+    }
+
     this.logger.log({
       level: LogLevel.Info,
       json: {
