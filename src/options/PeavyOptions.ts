@@ -45,7 +45,7 @@ export interface PeavyOptions {
    * - Page is hidden/closed
    * - Buffer reaches 1000 entries
    *
-   * Default: 30000 (30 seconds)
+   * Default: 15000 (15 seconds)
    */
   pushInterval?: number;
 
@@ -66,7 +66,7 @@ export const DEFAULT_OPTIONS: Required<Omit<PeavyOptions, 'endpoint'>> = {
   logLevel: LogLevel.Info,
   printToConsole: false,
   debug: false,
-  pushInterval: 30000, // 30 seconds
+  pushInterval: 15000, // 15 seconds
   attachUncaughtHandler: true,
   appVersion: null,
 };

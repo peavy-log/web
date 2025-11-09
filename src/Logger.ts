@@ -1,10 +1,10 @@
-import { AppVersion, PeavyOptions } from './options/PeavyOptions';
-import { Storage } from './Storage';
-import { LogEntry, LogEntryBuilder } from './LogEntry';
-import { LogLevel, logLevelToString } from './constants/LogLevel';
-import { VerbosityException } from './exceptions/VerbosityException';
-import { Debug } from './Debug';
-import { Device } from './Device';
+import { PeavyOptions } from "./options/PeavyOptions";
+import { Storage } from "./Storage";
+import { LogEntry, LogEntryBuilder } from "./LogEntry";
+import { LogLevel, logLevelToString } from "./constants/LogLevel";
+import { VerbosityException } from "./exceptions/VerbosityException";
+import { Debug } from "./Debug";
+import { Device } from "./Device";
 
 export class Logger {
   meta: Record<string, string | number | boolean> = {};
@@ -19,7 +19,7 @@ export class Logger {
   log(builder: LogEntryBuilder | ((b: LogEntryBuilder) => void)): void {
     let builderObj: LogEntryBuilder;
 
-    if (typeof builder === 'function') {
+    if (typeof builder === "function") {
       builderObj = {};
       builder(builderObj);
     } else {
@@ -52,13 +52,13 @@ export class Logger {
       const entry: LogEntry = {
         timestamp: new Date(),
         level,
-        message: builder.message || '',
+        message: builder.message || "",
         error: builder.error as Error | undefined,
         json: builder.json,
         labels: {},
       };
 
-      if (builder.json && builder.json['__peavy_type'] === 'event') {
+      if (builder.json && builder.json["__peavy_type"] === "event") {
         Object.assign(entry.labels, this.evLabels);
       } else {
         Object.assign(entry.labels, this.logLabels);
@@ -70,7 +70,9 @@ export class Logger {
     } catch (error) {
       if (error instanceof VerbosityException) {
         Debug.log(
-          `Discarded log line with level ${error.level !== null ? logLevelToString(error.level) : 'null'} due to verbosity level (${logLevelToString(error.minimum)})`
+          `Discarded log line with level ${
+            error.level !== null ? logLevelToString(error.level) : "null"
+          } due to verbosity level (${logLevelToString(error.minimum)})`
         );
         return null;
       }
@@ -79,7 +81,9 @@ export class Logger {
   }
 
   private logToConsole(entry: LogEntry): void {
-    const message = entry.message;
+    if (entry.json?.__peavy_type === "event") return;
+    let message = entry.message;
+    if (!message) message = "<no message>";
 
     switch (entry.level) {
       case LogLevel.Trace:
@@ -99,49 +103,47 @@ export class Logger {
   }
 
   private generateGlobalLabels(): void {
-    const setupLabels = async () => {
-      const browser = await Device.detectBrowser();
-      const appVersion = Device.getAppVersion(this.options);
+    const browser = Device.detectBrowser();
+    const appVersion = Device.getAppVersion(this.options);
 
-      this.logLabels = {
-        'platform': 'web',
-        'app-id': window.location.hostname,
-        'device-language': navigator.language,
-        'device-screen-w': window.screen.width,
-        'device-screen-h': window.screen.height,
-      };
-
-      if (browser) {
-        this.logLabels['platform-version'] = `${browser.brand} ${browser.version}`;
-        this.logLabels['device-model'] = browser.brand;
-      }
-
-      if (appVersion) {
-        this.logLabels['app-version'] = appVersion.name;
-        if (appVersion.code) {
-          this.logLabels['app-version-code'] = appVersion.code;
-        }
-      }
-
-      this.evLabels = {
-        platform: browser?.os ?? 'web',
-        'app-id': window.location.hostname,
-      };
-
-      if (appVersion?.code) {
-        this.evLabels['app-version-code'] = appVersion.code;
-      }
+    this.logLabels = {
+      platform: "web",
+      "app-id": window.location.hostname,
+      "device-language": navigator.language,
+      "device-screen-w": window.screen.width,
+      "device-screen-h": window.screen.height,
     };
 
-    setupLabels();
+    if (browser) {
+      this.logLabels[
+        "platform-version"
+      ] = `${browser.brand} ${browser.version}`;
+      this.logLabels["device-model"] = browser.brand;
+    }
+
+    if (appVersion) {
+      this.logLabels["app-version"] = appVersion.name;
+      if (appVersion.code) {
+        this.logLabels["app-version-code"] = appVersion.code;
+      }
+    }
+
+    this.evLabels = {
+      platform: browser?.os ?? "web",
+      "app-id": window.location.hostname,
+    };
+
+    if (appVersion?.code) {
+      this.evLabels["app-version-code"] = appVersion.code;
+    }
   }
 
   private resetSessionId(): void {
-    const id = 'xxxxxxxxxxxxxxxxxxxxxxxx'.replace(/x/g, () =>
+    const id = "xxxxxxxxxxxxxxxxxxxxxxxx".replace(/x/g, () =>
       ((Math.random() * 16) | 0).toString(16)
     );
     Debug.log(`Reset session id to ${id}`);
-    this.logLabels['session-id'] = id;
-    this.evLabels['session-id'] = id;
+    this.logLabels["session-id"] = id;
+    this.evLabels["session-id"] = id;
   }
 }

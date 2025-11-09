@@ -189,7 +189,7 @@ class PeavyInstance {
     category: string,
     name: string,
     identDurationResult: string | number | boolean | EventResult = "",
-    result: EventResult | undefined = EventResult.Success
+    result: EventResult | undefined = undefined
   ): void {
     let ident: string | number | boolean = "";
     let durationMs: number = 0;

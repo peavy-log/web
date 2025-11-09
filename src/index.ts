@@ -1,14 +1,14 @@
 // Main exports
-export { Peavy } from './Peavy';
+export { Peavy } from "./Peavy";
 
 // Constants
-export { LogLevel } from './constants/LogLevel';
-export { EventType } from './constants/EventType';
-export { EventResult } from './constants/EventResult';
-export { EventState } from './constants/EventState';
+export { LogLevel } from "./constants/LogLevel";
+export { EventType } from "./constants/EventType";
+export { EventResult } from "./constants/EventResult";
+export { EventState } from "./constants/EventState";
 
 // Options
-export type { PeavyOptions, AppVersion } from './options/PeavyOptions';
+export type { PeavyOptions, AppVersion } from "./options/PeavyOptions";
 
 // Types
-export type { LogEntry, LogEntryBuilder } from './LogEntry';
+export type { LogEntry, LogEntryBuilder } from "./LogEntry";

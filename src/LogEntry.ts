@@ -1,4 +1,4 @@
-import { LogLevel, logLevelToString } from './constants/LogLevel';
+import { LogLevel, logLevelToString } from "./constants/LogLevel";
 
 export interface LogEntry {
   timestamp: Date;
@@ -33,7 +33,7 @@ export function logEntryToJson(entry: LogEntry): Record<string, any> {
       labels[key] = value;
     }
   }
-  result['peavy/labels'] = labels;
+  result["peavy/labels"] = labels;
 
   if (entry.json) {
     Object.assign(result, entry.json);

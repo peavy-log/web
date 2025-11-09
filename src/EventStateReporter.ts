@@ -14,8 +14,8 @@ export class EventStateReporter {
     this.attempt(() => this.reportNetworkType());
     this.attempt(() => this.reportNotifications());
     this.attempt(() => this.reportAvailableMemory());
-    this.attempt(async () => {
-      const browser = await Device.detectBrowser();
+    this.attempt(() => {
+      const browser = Device.detectBrowser();
       if (browser) {
         this.peavy.state(EventState.DeviceModel, browser.brand);
         this.peavy.state(EventState.PlatformVersion, browser.osVersion ?? `${browser.brand} ${browser.version}`);
@@ -60,9 +60,14 @@ export class EventStateReporter {
     // @ts-ignore - NetworkInformation API is experimental
     const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
     if (connection) {
-      const effectiveType = connection.effectiveType;
-      if (effectiveType) {
-        this.peavy.state(EventState.NetworkType, effectiveType);
+      const type = connection.type;
+      if (type && type !== 'cellular' && type !== 'unknown') {
+        this.peavy.state(EventState.NetworkType, type);
+      } else {
+        const effectiveType = connection.effectiveType;
+        if (effectiveType) {
+          this.peavy.state(EventState.NetworkType, effectiveType);
+        }
       }
     }
   }

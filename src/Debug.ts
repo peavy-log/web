@@ -40,9 +40,7 @@ class DebugLogger {
 
       if (entry) {
         entry.labels['peavy/internal'] = 'true';
-        this.push?.pushEntry(entry).catch(() => {
-          this.logger?.log(entry);
-        });
+        this.logger?.log(entry);
       }
     }
 

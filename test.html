@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="version" content="1.0.0">
+    <title>Peavy Web Demo</title>
+</head>
+<body>
+    <h1>Peavy Web Library Demo</h1>
+    
+    <div>
+        <h2>Configuration</h2>
+        <label for="endpoint">Endpoint URL:</label>
+        <input type="text" id="endpoint" value="" style="width: 400px;">
+        <button onclick="initializePeavy()">Initialize Peavy</button>
+        <span id="status" style="margin-left: 10px;"></span>
+    </div>
+
+    <div>
+        <h2>Log Messages</h2>
+        <button onclick="logTrace()">Log Trace</button>
+        <button onclick="logDebug()">Log Debug</button>
+        <button onclick="logInfo()">Log Info</button>
+        <button onclick="logWarning()">Log Warning</button>
+        <button onclick="logError()">Log Error</button>
+    </div>
+
+    <div>
+        <h2>Events</h2>
+        <button onclick="trackAction()">Track Action</button>
+    </div>
+
+    <div>
+        <h2>Metadata</h2>
+        <button onclick="setUserMeta()">Set User Meta</button>
+        <button onclick="clearMeta()">Clear Meta</button>
+    </div>
+
+    <script type="module">
+        import { Peavy, LogLevel, EventResult } from './dist/bundle.js';
+
+        let isInitialized = false;
+
+        // Initialize Peavy with endpoint from text field
+        window.initializePeavy = () => {
+            const endpoint = document.getElementById('endpoint').value;
+            const statusEl = document.getElementById('status');
+            
+            if (!endpoint) {
+                statusEl.textContent = '❌ Please enter an endpoint URL';
+                statusEl.style.color = 'red';
+                return;
+            }
+
+            try {
+                Peavy.init({
+                    endpoint: endpoint,
+                    logLevel: LogLevel.Debug,
+                    debug: true,
+                    printToConsole: true,
+                    pushInterval: 5000,
+                });
+                
+                isInitialized = true;
+                statusEl.textContent = '✓ Initialized';
+                statusEl.style.color = 'green';
+                
+                // Log initial message
+                Peavy.i('Peavy demo initialized with endpoint: ' + endpoint);
+            } catch (error) {
+                statusEl.textContent = '❌ Initialization failed';
+                statusEl.style.color = 'red';
+                console.error('Failed to initialize Peavy:', error);
+            }
+        };
+
+        // Make functions available globally for buttons
+        window.logTrace = () => {
+            if (!isInitialized) return alert('Please initialize Peavy first');
+            Peavy.t('Trace message from button');
+        };
+        window.logDebug = () => {
+            if (!isInitialized) return alert('Please initialize Peavy first');
+            Peavy.d('Debug message from button');
+        };
+        window.logInfo = () => {
+            if (!isInitialized) return alert('Please initialize Peavy first');
+            Peavy.i('Info message from button');
+        };
+        window.logWarning = () => {
+            if (!isInitialized) return alert('Please initialize Peavy first');
+            Peavy.w('Warning message from button');
+        };
+        window.logError = () => {
+            if (!isInitialized) return alert('Please initialize Peavy first');
+            Peavy.e('Error message from button');
+        };
+
+        window.trackAction = () => {
+            if (!isInitialized) return alert('Please initialize Peavy first');
+            Peavy.action('ui', 'button_click', 'track-action-btn');
+        };
+
+        window.setUserMeta = () => {
+            if (!isInitialized) return alert('Please initialize Peavy first');
+            Peavy.setMeta({
+                userId: 'test-user-' + Date.now(),
+            });
+            alert('User metadata set!');
+        };
+
+        window.clearMeta = () => {
+            if (!isInitialized) return alert('Please initialize Peavy first');
+            Peavy.clearMeta();
+            alert('Metadata cleared!');
+        };
+
+        // Allow Enter key to initialize
+        document.getElementById('endpoint').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                initializePeavy();
+            }
+        });
+    </script>
+</body>
+</html>

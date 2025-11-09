@@ -21,9 +21,18 @@ export class Device {
     return options.appVersion ?? null;
   }
 
-  static async detectBrowser(): Promise<Browser | null> {
+  static detectBrowser(): Browser | null {
     let os = 'Unknown';
     let osVersion: string | undefined;
+
+    const osInfo = this.detectOSFromUA();
+    if (osInfo) {
+      os = osInfo.platform;
+      if (os === 'ios' || os === 'android') {
+        os = 'web'; // Normalize to web to avoid confusion with native
+      }
+      osVersion = osInfo.version;
+    }
 
     // Using User-Agent Client Hints if available
     if ('userAgentData' in navigator) {
@@ -32,8 +41,12 @@ export class Device {
         const brands = uaData.brands || [];
 
         os = uaData.platform;
-        if (os === 'iOS' || os === 'Android') {
-          os = 'web'; // Normalize to web to avoid confusion with native
+        if (os) {
+          if (os === 'iOS' || os === 'Android') {
+            os = 'web'; // Normalize to web to avoid confusion with native
+          } else {
+            os = os.toLowerCase();
+          }
         }
         
         // Find the primary browser (not "Chromium" or "Not_A Brand")
@@ -54,16 +67,6 @@ export class Device {
       } catch (error) {
         Debug.log('Failed to get userAgentData, falling back to agent parsing');
       }
-    }
-
-    // Fallback to UA parsing for OS
-    const osInfo = this.detectOSFromUA();
-    if (osInfo) {
-      os = osInfo.platform;
-      if (os === 'iOS' || os === 'Android') {
-        os = 'web'; // Normalize to web to avoid confusion with native
-      }
-      osVersion = osInfo.version;
     }
 
     const browser = this.detectBrowserFromUA();
@@ -119,17 +122,17 @@ export class Device {
     // Android
     const androidMatch = ua.match(/Android (\d+(\.\d+)?)/);
     if (androidMatch) {
-      return { platform: 'Android', version: androidMatch[1] };
+      return { platform: 'android', version: androidMatch[1] };
     }
     
     // Linux
     if (ua.includes('Linux')) {
-      return { platform: 'Linux' };
+      return { platform: 'linux' };
     }
     
     // Chrome OS
     if (ua.includes('CrOS')) {
-      return { platform: 'Chrome OS' };
+      return { platform: 'chromeos' };
     }
 
     return null;

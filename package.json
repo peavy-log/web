@@ -1,12 +1,13 @@
 {
   "name": "@peavy-log/web",
   "version": "1.0.0",
-  "description": "Peavy logging library for web applications",
+  "description": "Peavy remote logging library for web",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "watch": "tsc --watch",
+    "build:demo": "esbuild src/index.ts --bundle --format=esm --outfile=dist/bundle.js --sourcemap",
+    "watch": "esbuild src/index.ts --bundle --format=esm --outfile=dist/bundle.js --sourcemap --watch",
     "clean": "rm -rf dist"
   },
   "keywords": [
@@ -18,6 +19,7 @@
   "author": "Magnus (magnm@github)",
   "license": "MIT",
   "devDependencies": {
+    "esbuild": "^0.25.12",
     "typescript": "^5.9.3"
   },
   "files": [

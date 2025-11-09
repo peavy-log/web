@@ -1,12 +1,12 @@
-import { LogEntry } from './LogEntry';
-import { Debug } from './Debug';
+import { LogEntry } from "./LogEntry";
+import { Debug } from "./Debug";
 
 export class Storage {
   private buffer: LogEntry[] = [];
 
   storeEntry(entry: LogEntry): void {
     this.buffer.push(entry);
-    Debug.log(`Stored entry to buffer (${this.buffer.length} entries)`);
+    Debug.log(`Stored entry (${this.buffer.length} total)`);
   }
 
   flush(): LogEntry[] {
