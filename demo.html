@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="version" content="1.0.0">
+    <title>Peavy Web Demo</title>
+</head>
+<body>
+    <h1>Peavy Web Library Demo</h1>
+    
+    <div>
+        <h2>Log Messages</h2>
+        <button onclick="logTrace()">Log Trace</button>
+        <button onclick="logDebug()">Log Debug</button>
+        <button onclick="logInfo()">Log Info</button>
+        <button onclick="logWarning()">Log Warning</button>
+        <button onclick="logError()">Log Error</button>
+    </div>
+
+    <div>
+        <h2>Events</h2>
+        <button onclick="trackAction()">Track Action</button>
+    </div>
+
+    <div>
+        <h2>Metadata</h2>
+        <button onclick="setUserMeta()">Set User Meta</button>
+        <button onclick="clearMeta()">Clear Meta</button>
+    </div>
+
+    <div>
+        <h2>Device Detection</h2>
+        <button onclick="detectDevice()">Detect Browser & OS</button>
+        <pre id="device-info" style="background: #f5f5f5; padding: 10px; margin-top: 10px; border-radius: 4px;">Click button to detect device info...</pre>
+    </div>
+
+    <script type="module">
+        import { Peavy, LogLevel, action, state, EventResult } from './dist/index.js';
+        import { Device } from './dist/Device.js';
+
+        // Initialize Peavy
+        Peavy.init({
+            endpoint: 'https://peavy.staging.urbansharing.tech',
+            logLevel: LogLevel.Debug,
+            debug: true,
+            printToConsole: true,
+            pushInterval: 5000,
+        });
+
+        // Make functions available globally for buttons
+        window.logTrace = () => Peavy.t('Trace message from button');
+        window.logDebug = () => Peavy.d('Debug message from button');
+        window.logInfo = () => Peavy.i('Info message from button');
+        window.logWarning = () => Peavy.w('Warning message from button');
+        window.logError = () => Peavy.e('Error message from button');
+
+        window.trackAction = () => Peavy.action('ui', 'button_click', 'track-action-btn');
+
+        window.setUserMeta = () => {
+            Peavy.setMeta({
+                userId: 'demo-user-' + Date.now(),
+                sessionStart: new Date().toISOString(),
+            });
+            alert('User metadata set!');
+        };
+
+        window.clearMeta = () => {
+            Peavy.clearMeta();
+            alert('Metadata cleared!');
+        };
+
+        window.detectDevice = async () => {
+            const deviceInfo = document.getElementById('device-info');
+            deviceInfo.textContent = 'Detecting...';
+            
+            try {
+                const browser = await Device.detectBrowser();
+                deviceInfo.textContent = JSON.stringify(browser, null, 2);
+                console.log('Browser info:', browser);
+            } catch (error) {
+                deviceInfo.textContent = 'Error: ' + error.message;
+                console.error('Detection error:', error);
+            }
+        };
+
+        // Log initial message
+        Peavy.i('Peavy demo initialized');
+    </script>
+</body>
+</html>
