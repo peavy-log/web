@@ -8,6 +8,7 @@ import { Debug } from "./Debug";
 import { EventType } from "./constants/EventType";
 import { EventResult } from "./constants/EventResult";
 import { EventStateReporter } from "./EventStateReporter";
+import { attachListeners } from "./integrations/interactions";
 
 class PeavyInstance {
   private logger!: Logger;
@@ -34,6 +35,9 @@ class PeavyInstance {
 
     if (fullOptions.attachUncaughtHandler) {
       this.attachUncaughtHandler();
+    }
+    if (fullOptions.attachInteractionListeners) {
+      attachListeners();
     }
 
     this.restoreMeta();
@@ -97,12 +101,12 @@ class PeavyInstance {
     window.addEventListener("error", (event) => {
       this.e("Uncaught exception", event.error);
       this.push.prepareAndPush();
-    });
+    }, { passive: true });
 
     window.addEventListener("unhandledrejection", (event) => {
       this.e("Unhandled promise rejection", event.reason);
       this.push.prepareAndPush();
-    });
+    }, { passive: true });
   }
 
   log(builder: LogEntryBuilder | ((b: LogEntryBuilder) => void)): void {

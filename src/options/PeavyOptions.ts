@@ -57,6 +57,14 @@ export interface PeavyOptions {
   attachUncaughtHandler?: boolean;
 
   /**
+   * Automatically attach listeners to capture user interactions
+   * such as clicks and input changes.
+   *
+   * Default: true
+   */
+  attachInteractionListeners?: boolean;
+
+  /**
    * Set the application version manually to be included in log labels.
    */
   appVersion?: AppVersion | null;
@@ -68,5 +76,6 @@ export const DEFAULT_OPTIONS: Required<Omit<PeavyOptions, 'endpoint'>> = {
   debug: false,
   pushInterval: 15000, // 15 seconds
   attachUncaughtHandler: true,
+  attachInteractionListeners: true,
   appVersion: null,
 };
