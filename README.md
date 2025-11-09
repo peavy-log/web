@@ -25,7 +25,9 @@ Peavy.init({
 // Simple logging
 Peavy.t('Trace message'); // Trace
 Peavy.d('Debug message'); // Debug
-Peavy.i('Info message'); // Info
+Peavy.i('Info message', {
+  extra: 'data',
+}); // Info
 Peavy.w('Warning message'); // Warning
 Peavy.e('Error message'); // Error
 
@@ -46,16 +48,21 @@ Peavy.log((builder) => {
 
 ### Events
 
-Track user actions and state changes:
+Track user actions and state changes.
+
+State changes are events that represent a persistent configuration or mode of the application changing.
+Examples include changing dark mode/theme/colors or enabling/disabling a feature.
 
 ```typescript
 import { Peavy } from '@peavy-log/web';
 
 // Track a user action
 Peavy.action('user', 'login', 1200, EventResult.Success);
+Peavy.action('qr', 'open');
 
-// Track general events
-Peavy.state('qr', 'open');
+// Track state events
+Peavy.state('<category>', '<name>', '<value>');
+Peavy.state('app', 'persistence', 'indexeddb');
 ```
 
 ### Metadata
@@ -65,7 +72,7 @@ Add persistent metadata to all logs. This persists across sessions (using locals
 This should be used sparingly, and only for data that is relevant for all logs and events,
 and which is not available or inferrable elsewhere.
 
-Versions are automatically managed, so need not be added. The same goes for environment info.
+Versions are automatically managed, so need not be added. The same goes for environment and global app info.
 
 ```typescript
 // Set metadata
