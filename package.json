@@ -3,27 +3,52 @@
   "version": "1.0.0",
   "description": "Peavy remote logging library for web",
   "main": "dist/index.js",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
+  },
   "scripts": {
     "build": "tsc",
     "build:demo": "esbuild src/index.ts --bundle --format=esm --outfile=dist/bundle.js --sourcemap",
     "watch": "esbuild src/index.ts --bundle --format=esm --outfile=dist/bundle.js --sourcemap --watch",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run clean && npm run build"
   },
   "keywords": [
     "logging",
+    "remote-logging",
     "peavy",
     "typescript",
     "web"
   ],
   "author": "Magnus (magnm@github)",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/peavy-log/web.git"
+  },
+  "bugs": {
+    "url": "https://github.com/peavy-log/web/issues"
+  },
+  "homepage": "https://github.com/peavy-log/web#readme",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "esbuild": "^0.25.12",
     "typescript": "^5.9.3"
   },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ]
 }
