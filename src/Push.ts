@@ -16,8 +16,10 @@ export class Push {
       this.prepareAndPush();
     }, interval);
 
-    window.addEventListener("pagehide", () => {
-      this.prepareAndPush(true);
+    window.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "hidden") {
+        this.prepareAndPush(true);
+      }
     });
   }
 
