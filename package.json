@@ -1,6 +1,6 @@
 {
   "name": "@peavy-log/web",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Peavy remote logging library for web",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -10,6 +10,11 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.js"
+    },
+    "./integrations/axios": {
+      "types": "./dist/integrations/axios/index.d.ts",
+      "import": "./dist/integrations/axios/index.js",
+      "require": "./dist/integrations/axios/index.js"
     }
   },
   "scripts": {
@@ -45,6 +50,14 @@
   "devDependencies": {
     "esbuild": "^0.25.12",
     "typescript": "^5.9.3"
+  },
+  "peerDependencies": {
+    "axios": "^0.27.0 || ^1.0"
+  },
+  "peerDependenciesMeta": {
+    "axios": {
+      "optional": true
+    }
   },
   "files": [
     "dist",

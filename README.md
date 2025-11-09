@@ -83,3 +83,21 @@ Peavy.setMeta({
 // Clear metadata
 Peavy.clearMeta();
 ```
+
+## Integrations
+
+### Axios
+
+If you're using axios, you can use the Peavy's interceptors to automatically log requests and responses, plus add tracing headers the requests.
+
+```typescript
+import axios from 'axios';
+import {
+  peavyRequestInterceptor,
+  peavyResponseInterceptor,
+  peavyErrorInterceptor,
+} from '@peavy-log/web/integrations/axios';
+
+axios.interceptors.request.use(peavyRequestInterceptor);
+axios.interceptors.response.use(peavyResponseInterceptor, peavyErrorInterceptor);
+```
